@@ -1,6 +1,6 @@
 <html lang="en" ng-app="BlogApp" ng-controller="loginController">
 <head>
-  <title>Bootstrap Example</title>
+  <title>BlogApp</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href=" https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css ">
@@ -31,7 +31,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li ng-hide="checkLoggedIn()" ng-show="!checkLoggedIn()">
-          <a href="#!/login">Login</a>
+          <a ng-model="login" href="#!/login">Login</a>
         </li>
         <li ng-hide="!checkLoggedIn()" ng-show="checkLoggedIn()">
           <a href="/" ng-click="logout()">Logout</a>
@@ -46,6 +46,14 @@
 </div>
 
 <script src="Scripts/app.js"></script>
+<script src="Scripts/sessionService.js"></script>
+<script src="Scripts/loginService.js"></script>
+<script src="Scripts/commentService.js"></script>
+<script src="Scripts/accountService.js"></script>
+<script src="Scripts/postService.js"></script>
+<script src="Scripts/databaseService.js"></script>
+<script src="Scripts/archiveService.js"></script>
+<script src="Scripts/Filters.js"></script>
 </body>
 </html>
 

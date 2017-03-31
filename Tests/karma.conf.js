@@ -18,9 +18,18 @@ module.exports = function(config) {
       '../bower_components/angular/angular.js',
       '../bower_components/angular-mocks/angular-mocks.js',
       '../bower_components/angular-route/angular-route.js',
-      '../Scripts/**/*.js',
+      '../bower_components/angular.uuid2/dist/angular-uuid2.js',
       'spec/**/*.js',
-      'spec/*.js'
+      'spec/*.js',
+      '../Scripts/app.js',
+      '../Scripts/Filters.js',
+      '../Scripts/databaseService.js',
+      '../Scripts/accountService.js',
+      '../Scripts/archiveService.js',
+      '../Scripts/commentService.js',
+      '../Scripts/loginService.js',
+      '../Scripts/postService.js',
+      '../Scripts/sessionService.js',
     ],
 
 
@@ -60,7 +69,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: ['Chrome'],
 
 
     // Continuous Integration mode

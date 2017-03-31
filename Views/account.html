@@ -1,10 +1,11 @@
+<h3>My Account</h3>
 <form ng-controller="accountController" ng-submit="saveChanges()">
   Username:<br>
-  <input type="text" ng-model="username" required><br>
+  <input type="text" ng-model="username" required><br><br>
   Mail:<br>
-  <input type="text" ng-model="mail" required><br>
-  Current image:<img alt="Image" src={{user.image}} ngf-resize="{width: 100, height: 100}"> <br>
-  <input type="text" id="image" ng-model="image" required><br>
+  <input type="text" ng-model="mail" required><br><br>
+  Current image:<img alt="Image" src={{user.image}} ngf-resize="{width: 100, height: 100}"> <br><br>
+  <input type="text" id="image" ng-model="image" required><br><br>
   <input type="button" value="Change Password" ng-click="setPass()">
   <div ng-show="pass()" ng-hide="!pass()">
     New Password:<br>

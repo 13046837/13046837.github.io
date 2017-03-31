@@ -6,11 +6,11 @@
                       Username:<br>
                       <input type="text" id="username" ng-model="username" required><br>
                       Password:<br>
-                      <input type="text" id="password" ng-model="password" required><br>
+                      <input type="password" id="password" ng-model="password" required><br>
                       <div class="TryAgain" ng-hide="!checkTried()" ng-show="checkTried()">
                           Try Again <br>
                       </div>
-                      <input type="submit" value="Login">
+                      <input id="submitButton" type="submit" value="Login">
                       <a href="#!/register">Register</a>
                     </form>
             </div>

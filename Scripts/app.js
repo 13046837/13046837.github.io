@@ -1,4 +1,4 @@
-var BlogApp = angular.module('BlogApp', ['ngRoute', 'ngFileUpload', 'angularUUID2']);
+var BlogApp = angular.module('BlogApp', ['ngRoute', 'angularUUID2']);
 
 BlogApp.config(function ($routeProvider){
 
@@ -51,7 +51,7 @@ BlogApp.controller('mainController', ['$scope', 'databaseService', 'archiveServi
     $scope.filterDate = function(date){
         databaseService.get();
         $scope.posts = databaseService.posts;
-        $scope.posts = archiveService.filterPosts(date.month, date.year);
+        $scope.posts = archiveService.filterPosts($scope.posts, date.month, date.year);
     }
 
     $scope.showAll = function() {
@@ -93,7 +93,7 @@ BlogApp.controller('loginController', ['$scope', '$location', 'loginService', 's
     };
 }]);
 
-BlogApp.controller('accountController', ['$scope', 'sessionService', 'databaseService', '$location', function($scope, sessionService, databaseService, $location){
+BlogApp.controller('accountController', ['$scope', 'sessionService', 'accountService', '$location', function($scope, sessionService, accountService, $location){
    $scope.user = JSON.parse(localStorage.getItem('currentUser'));
    $scope.username = $scope.user.username;
    $scope.mail = $scope.user.mail;
@@ -113,18 +113,18 @@ BlogApp.controller('accountController', ['$scope', 'sessionService', 'databaseSe
     if(pass != false){
         newPassword = $scope.password;
     }
-     databaseService.editAccount($scope.user.id, $scope.username, $scope.mail, $scope.image, newPassword);
+     accountService.editAccount($scope.user.id, $scope.username, $scope.mail, $scope.image, newPassword);
      $location.path('/');
    }
 
     $scope.deleteAccount = function() {
-        databaseService.deleteAccount($scope.user.id);
+        accountService.deleteAccount($scope.user.id);
         sessionService.logout();
         $location.path('/');
     };
 }]);
 
-BlogApp.controller('detailController', ['$scope','$http', '$routeParams', '$location', 'databaseService', 'uuid2', function($scope, $http, $routeParams, $location, databaseService, uuid2){
+BlogApp.controller('detailController', ['$scope','$http', '$routeParams', '$location', 'postService', 'commentService', 'databaseService', 'uuid2', function($scope, $http, $routeParams, $location, postService, commentService, databaseService, uuid2){
     databaseService.get();
     var id = $routeParams.id;
     var editC = false;
@@ -132,11 +132,11 @@ BlogApp.controller('detailController', ['$scope','$http', '$routeParams', '$loca
     var editP = false;
     var editPost;
     $scope.currentuser = JSON.parse(localStorage.getItem('currentUser'));
-    $scope.post = databaseService.getPost(id);
-    $scope.comments = databaseService.getComments(id);
+    $scope.post = postService.getPost(id);
+    $scope.comments = commentService.getComments(id);
     $scope.postComment = function() {
-        databaseService.postComment({user: $scope.currentuser.username, post: $scope.post.id, date: new Date, comment: $scope.commentText, image: $scope.currentuser.image, id: uuid2.newuuid()});
-        $scope.comments = databaseService.getComments(id);
+        commentService.postComment({user: $scope.currentuser.username, post: $scope.post.id, date: new Date, comment: $scope.commentText, image: $scope.currentuser.image, id: uuid2.newuuid()});
+        $scope.comments = commentService.getComments(id);
     };
 
     $scope.setEditC = function(comment){
@@ -161,300 +161,56 @@ BlogApp.controller('detailController', ['$scope','$http', '$routeParams', '$loca
     };
 
     $scope.editComment = function() {
-        databaseService.editComment(editComment.id, $scope.commentText);
+        commentService.editComment(editComment.id, $scope.commentText);
         editComment = null;
         editC = false;
-        $scope.comments = databaseService.getComments(id);
+        $scope.comments = commentService.getComments(id);
     };
 
     $scope.deleteComment = function(comment) {
-        databaseService.deleteComment(comment.id);
-        $scope.comments = databaseService.getComments(id);
+        commentService.deleteComment(comment.id);
+        $scope.comments = commentService.getComments(id);
     };
 
     $scope.editPost = function() {
-        databaseService.editPost(editPost.id, $scope.postText, $scope.postTitle, $scope.postImage);
-        console.log($scope.postText);
-        console.log($scope.postTitle);
+        postService.editPost(editPost.id, $scope.postText, $scope.postTitle, $scope.postImage);
         editPost = null;
         editP = false;
-        $scope.post = databaseService.getPost(id);
+        $scope.post = postService.getPost(id);
     };
 
     $scope.deletePost = function(post) {
-        databaseService.deletePost(post.id);
+        postService.deletePost(post.id);
         $location.path('/');
     }
 }]);
 
-BlogApp.controller('createController', ['$scope', 'databaseService', '$location', 'uuid2', function($scope, databaseService, $location, uuid2){
+BlogApp.controller('createController', ['$scope', 'postService', '$location', 'uuid2', function($scope, postService, $location, uuid2){
     $scope.createPost = function(){
-        databaseService.createPost({title: $scope.title, body: $scope.body, date: new Date, image: $scope.image, id: uuid2.newuuid()});
+        postService.createPost({title: $scope.title, body: $scope.body, date: new Date, image: $scope.image, id: uuid2.newuuid()});
         $location.path('/');
     }
 }]);
 
-BlogApp.controller('registerController', ['$scope', 'databaseService', 'loginService', '$location', 'uuid2', function($scope, databaseService, loginService, $location, uuid2){
+BlogApp.controller('registerController', ['$scope', 'accountService', 'loginService', '$location', 'uuid2', function($scope, accountService, loginService, $location, uuid2){
     $scope.register = function(){
-        databaseService.register({username: $scope.username, mail: $scope.mail, password: $scope.password, admin: false, image: $scope.image, id: uuid2.newuuid()});
-        loginService.login($scope.username, $scope.password)
-        $location.path('/');
-    }
-}]);
-
-BlogApp.service('databaseService',['uuid2', function(uuid2){
-    if(localStorage.getItem('users') == null){
-        this.users = [{username: 'Admin', mail: 'Admin@admin.com', password: 'safepassword', admin: 'Yes', image: 'https://puu.sh/uCHZN/784e35969f.jpg',  id: uuid2.newuuid()}];
-        localStorage.setItem('users', JSON.stringify(this.users));
-    }
-    if(localStorage.getItem('posts') == null){
-        this.posts = [{title: 'kroketten', body: 'zijn vies...', date: new Date, image: 'http://www.planwallpaper.com/static/images/nature_backgrounds_perfect_backgrounds_picture_7049.jpg', id: 0},{title: 'test', body: 'This is a test...', date: new Date, image: 'http://i.imgur.com/tAHVmXi.jpg', id: 1},{title: 'test', body: 'zijn vies...', date: new Date, image: 'http://www.planwallpaper.com/static/images/nature_backgrounds_perfect_backgrounds_picture_7049.jpg', id: 2}];
-        this.posts[0].date.setFullYear('2018');
-        localStorage.setItem('posts', JSON.stringify(this.posts));
-    }
-    if(localStorage.getItem('comments') == null){
-        this.comments = [{user: this.users[0].username, post: this.posts[0].id, date: new Date, comment: 'this is a test', image: this.users[0].image,  id: uuid2.newuuid()}];
-        localStorage.setItem('comments', JSON.stringify(this.comments));
-    }
-
-    this.get = function(){
-        this.users = JSON.parse(localStorage.getItem('users'));
-        this.posts = JSON.parse(localStorage.getItem('posts'));
-        this.comments = JSON.parse(localStorage.getItem('comments'));
-    };
-
-    this.getPost = function(id){
-        var post = null;
-        this.posts.forEach(function(e, i) {
-            if(e.id == id){
-               post = e;
-            }
-        })
-        return post;
-    };
-     
-    this.createPost = function(data){
-        this.get();
-        this.posts.push(data);
-        localStorage.setItem('posts', JSON.stringify(this.posts));
-    };
-
-    this.editPost = function(id, editText, editTitle, editImage) {
-        this.get();
-        var postIndex;
-        this.posts.forEach(function(e, i) {
-            if(e.id == id){
-                postIndex = i;
-            }
-        })
-        if(postIndex != null) {
-            this.posts[postIndex].body = editText;
-            this.posts[postIndex].title = editTitle;
-            this.posts[postIndex].image = editImage;
-            localStorage.setItem('posts', JSON.stringify(this.posts));
+        if(accountService.isUsernameUnique($scope.username) && $scope.username.length <= 16 && $scope.username.length >= 5){
+            accountService.register({username: $scope.username, mail: $scope.mail, password: $scope.password, admin: false, image: $scope.image, id: uuid2.newuuid()});
+            loginService.login($scope.username, $scope.password)
+            $location.path('/');
         }
-    };
-
-    this.deletePost = function(id){
-        this.get();
-        var postIndex;
-        this.posts.forEach(function(e, i) {
-            if(e.id == id){
-                postIndex = i;
-            }
-        })
-        if(postIndex != null){
-            this.posts.splice(postIndex, 1);
-            localStorage.setItem('posts', JSON.stringify(this.posts));
-        }
-    };
-
-
-    this.getComments = function(id){
-        this.get();
-        var commentList = [];
-        this.comments.forEach(function(e, i) {
-            if(e.post == id) {
-                commentList.push(e);
-            }
-        })
-        return commentList;
-    };
-
-    this.postComment = function(data){
-        this.get();
-        this.comments.push(data);
-        localStorage.setItem('comments', JSON.stringify(this.comments));
-    };
-
-    this.editComment = function(id, editText) {
-        this.get();
-        var commentIndex;
-        this.comments.forEach(function(e, i) {
-            if(e.id == id){
-                console.log(i);
-                console.log(e);
-                commentIndex = i;
-            }
-        })
-        if(commentIndex != null) {
-            this.comments[commentIndex].comment = editText;
-            localStorage.setItem('comments', JSON.stringify(this.comments));
-        }
-    };
-
-    this.deleteComment = function(id){
-        this.get();
-        var commentIndex;
-        this.comments.forEach(function(e, i) {
-            if(e.id == id){
-                console.log(i);
-                console.log(e);
-                commentIndex = i;
-            }
-        })
-        if(commentIndex != null) {
-            this.comments.splice(commentIndex, 1);
-            localStorage.setItem('comments', JSON.stringify(this.comments));
-        }
-    };
-
-    this.register = function(data){
-        this.get();
-        this.users.push(data);
-
-        localStorage.setItem('users', JSON.stringify(this.users));
-    };
-
-    this.editAccount = function(id, username, mail, image, password) {
-        this.get();
-        var accountIndex;
-        this.users.forEach(function(e, i) {
-            if(e.id == id){
-                console.log(i);
-                console.log(e);
-                accountIndex = i;
-            }
-        })
-        if(accountIndex != null) {
-            this.users[accountIndex].username = username;
-            this.users[accountIndex].mail = mail;
-            this.users[accountIndex].image = image;
-            if(password != null){
-                this.users[accountIndex].password = password;
-            }
-            localStorage.setItem('users', JSON.stringify(this.users));
-            localStorage.setItem('currentUser', JSON.stringify(this.users[accountIndex]))
-        }
-    };
-
-    this.deleteAccount = function(id){
-        this.get();
-        var accountIndex;
-        this.users.forEach(function(e, i) {
-            if(e.id == id){
-                console.log(i);
-                console.log(e);
-                accountIndex = i;
-            }
-        })
-        if(accountIndex != null) {
-            this.users.splice(accountIndex, 1);
-            localStorage.setItem('users', JSON.stringify(this.users));
-        }
-    };
-}]);
-
-BlogApp.service('archiveService', ['databaseService', function(databaseService){
-    var dates = [];
-
-    this.fillArchive = function(posts){
-        posts.forEach(function(e, i) {     
-            var date = new Date(e.date);
-            var dateString;
-            var month;
-            var year;
-            if(date.getMonth() == 0){
-                dateString = 'January ' + date.getFullYear()
-            }else if(date.getMonth() == 1){
-                dateString = 'February ' + date.getFullYear()
-            }else if(date.getMonth() == 2){
-                dateString = 'March ' + date.getFullYear()
-            }else if(date.getMonth() == 3){
-                dateString = 'April ' + date.getFullYear() 
-            }else if(date.getMonth() == 4){
-                dateString = 'May ' + date.getFullYear() 
-            }else if(date.getMonth() == 5){
-                dateString = 'June ' + date.getFullYear()
-            }else if(date.getMonth() == 6){
-                dateString = 'July ' + date.getFullYear()
-            }else if(date.getMonth() == 7){
-                dateString = 'August ' + date.getFullYear()
-            }else if(date.getMonth() == 8){
-                dateString = 'September ' + date.getFullYear()
-            }else if(date.getMonth() == 9){
-                dateString = 'October ' + date.getFullYear()
-            }else if(date.getMonth() == 10){
-                dateString = 'November ' + date.getFullYear()
-            }else if(date.getMonth() == 11){
-                dateString = 'December ' + date.getFullYear()
-            }
-            var duplicate = false;
-            dates.forEach(function(e, i) { 
-                if(e.dateString == dateString){
-                    duplicate = true;
-                }
-            })
-            if(duplicate != true){
-                month = date.getMonth();
-                year = date.getFullYear();
-                dates.push({dateString: dateString, month: month, year: year});
-            }
-        })
-        return dates;
     }
 
-    this.filterPosts = function(month, year){
-        var posts = [];
-        databaseService.get();
-        databaseService.posts.forEach(function(e, i) { 
-            var date = new Date(e.date);
-            if(date.getMonth() == month && date.getFullYear() == year){
-                posts.push(e);
-            }
-        })
-        return posts;
-    }
-}]);
-
-BlogApp.service('sessionService',[ function(databaseService){
-
-    this.setCurrentUser = function(user){
-        localStorage.setItem('currentUser', JSON.stringify(user));
-    }
-
-    this.logout = function(){
-        localStorage.removeItem('currentUser');
-    }
-
-    this.currentUser = function(){
-        return JSON.parse(localStorage.getItem('currentUser'));
-    }
-}]);
-
-BlogApp.service('loginService',['databaseService', 'sessionService', function(databaseService, sessionService){
-   
-    this.login = function(username, password){
-        databaseService.get();
-        var current;
-        console.log(username);
-        console.log(password);
-        databaseService.users.forEach(function(e, i){
-            if(e.username == username && e.password == password){
-                current = e;
-                sessionService.setCurrentUser(current);
-            }
-        })
-        return current;
+    $scope.checkUsername = function(){
+        if(accountService.isUsernameUnique($scope.username)){
+            $scope.usernameError = "This username is available."
+        }else{
+            $scope.usernameError = "This username is already in use."
+        }
+        if($scope.username.length <= 4){
+            $scope.usernameError = "This username is too short."
+        }else if($scope.username.length >= 17){
+            $scope.usernameError = "This username is too long."
+        }
     }
 }]);
