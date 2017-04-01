@@ -1,3 +1,17 @@
 .container-fluid{
     overflow: hidden;
 }
+
+.navbar{
+    margin-bottom: 3rem;
+}
+
+body{ 
+    background: #d9edf7;
+}
+
+.sidenav{
+    border: 2px solid #009edf;
+    border-radius: 5px; 
+    background: #d9edf7;
+}

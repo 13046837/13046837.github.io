@@ -1,0 +1,15 @@
+.main{
+     background-color: #d9edf7; 
+     border: 2px solid #009edf;
+     border-radius: 5px; 
+     max-width: 400px;
+     margin: auto;
+}
+
+.navbar{
+    margin-bottom: 3rem;
+}
+
+body{ 
+    background: #d9edf7;
+}

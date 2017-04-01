@@ -100,6 +100,15 @@ BlogApp.controller('accountController', ['$scope', 'sessionService', 'accountSer
    $scope.image = $scope.user.image;
    var pass = false;
 
+   $scope.checkAdmin = function(){
+        if($scope.checkLoggedIn()){
+            return (JSON.parse(localStorage.getItem('currentUser')).admin != false);
+        }
+        else{
+            return false;
+        }
+    };
+
    $scope.setPass = function(){
         pass = true;
     };
@@ -154,6 +163,7 @@ BlogApp.controller('detailController', ['$scope','$http', '$routeParams', '$loca
         editPost = post;
         $scope.postText = post.body;
         $scope.postTitle = post.title;
+        $scope.postImage = post.image;
     };
 
     $scope.editP = function(){

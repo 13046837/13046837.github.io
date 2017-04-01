@@ -1,18 +1,22 @@
 <link rel="stylesheet" type="text/css" href="../Styles/register.css" />
-<div id="page-wrap">
-<h3>Register</h3>
-<form ng-controller="registerController" ng-submit="register()">
-  Username:<br>
-  <div class="TryAgain">
-    {{usernameError}} <br>
+<div class="main">
+  <div id="page-wrap">
+    <div class="text-center">
+      <h3>Register</h3>
+      <form ng-controller="registerController" ng-submit="register()">
+        Username:<br>
+        <div class="TryAgain">
+          {{usernameError}} <br>
+        </div>
+        <input type="text" id="username" name="username" ng-model="username" ng-change="checkUsername()" required><br>
+        Email:<br><br>
+        <input type="email" id="mail" ng-model="mail"  ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/" required><br>
+        Password:<br><br>
+        <input type="password" id="password" ng-model="password" required><br>
+        Avatar URL:<br><br>
+        <input type="text" id="image" ng-model="image" required><br><br>
+        <input type="submit" value="Submit">
+      </form>
+    </div>
   </div>
-  <input type="text" id="username" name="username" ng-model="username" ng-change="checkUsername()" required><br>
-  Email:<br><br>
-  <input type="email" id="mail" ng-model="mail"  ng-pattern="/^[_a-z0-9]+(\.[_a-z0-9]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/" required><br>
-  Password:<br><br>
-  <input type="password" id="password" ng-model="password" required><br>
-  Avatar URL:<br><br>
-  <input type="text" id="image" ng-model="image" required><br><br>
-  <input type="submit" value="Submit">
-</form>
 </div>

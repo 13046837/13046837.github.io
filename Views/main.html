@@ -3,8 +3,8 @@
   <div class="row content">
     <div class="col-sm-2 hidden-sm hidden-xs sidenav">
         <p><a ng-click="showAll()">Show All</a></p>
-      <div ng-repeat="x in dates | orderBy: 'year':true">
-        <p><a ng-click="filterDate(x)">{{x.dateString}}</a></p>
+      <div class="archivelist" ng-repeat="x in dates | orderBy: 'year':true">
+        <p><a class="archiveItem" ng-click="filterDate(x)">{{x.dateString}}</a></p>
       </div>
     </div>
     <div class="col-md-8 col-sm-12 text-left">

@@ -1,6 +1,6 @@
 BlogApp.service('databaseService',['uuid2', function(uuid2){
     if(localStorage.getItem('users') == null){
-        this.users = [{username: 'Admin', mail: 'Admin@admin.com', password: 'safepassword', admin: 'Yes', image: 'https://puu.sh/uCHZN/784e35969f.jpg',  id: uuid2.newuuid()}];
+        this.users = [{username: 'Admin', mail: 'Admin@admin.com', password: 'safepassword', admin: 'Yes', image: 'https://puu.sh/v5JIK/9048eb6095.jpg',  id: uuid2.newuuid()}];
         localStorage.setItem('users', JSON.stringify(this.users));
     }
     if(localStorage.getItem('posts') == null){

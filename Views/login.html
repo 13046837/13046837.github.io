@@ -4,13 +4,13 @@
             <div class="row">
                     <form ng-controller="loginController" ng-submit="login()">
                       Username:<br>
-                      <input type="text" id="username" ng-model="username" required><br>
+                      <input type="text" id="username" class="username" ng-model="username" required><br>
                       Password:<br>
-                      <input type="password" id="password" ng-model="password" required><br>
+                      <input type="password" id="password" class="password" ng-model="password" required><br>
                       <div class="TryAgain" ng-hide="!checkTried()" ng-show="checkTried()">
                           Try Again <br>
                       </div>
-                      <input id="submitButton" type="submit" value="Login">
+                      <input id="submitButton" class="submitButton" type="submit" value="Login">
                       <a href="#!/register">Register</a>
                     </form>
             </div>

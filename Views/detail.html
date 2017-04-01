@@ -14,9 +14,7 @@
             </div>
         </div>                
         <div class="panel-body">
-            <a class="thumbnail">
-            <img alt="Image" src={{post.image}}>
-            </a>
+            <img class="thumbnail" alt="Image" src={{post.image}}>
             <div class="blog-text">
                     {{post.body}}
                 <div class="btn-group pull-right marginBottom10" ng-hide="!checkAdmin()" ng-show="checkAdmin()">
@@ -36,7 +34,7 @@
                 <input type="button" value="Edit Post" ng-click="editPost()">
             </form>
         </div>
-        <div class="container">
+        <div class="container" ng-hide="!checkLoggedIn()" ng-show="checkLoggedIn()">
             <div class="row">
                 <div class="comment-section">
                     <h3>Comment Section</h3>
@@ -46,7 +44,7 @@
                 <div class="col-md-6">
                     <div class="widget-area no-padding blank">
                         <div class="status-upload">
-                            <form ng-submit="postComment()" ng-hide="!checkLoggedIn()" ng-show="checkLoggedIn()">
+                            <form ng-submit="postComment()" >
                                 <textarea ng-model="commentText"></textarea>
                                 <div ng-show="editC()" ng-hide="!editC()">
                                     <button type="button" class="btn btn-success green" ng-click="editComment()">Save Changes</button>

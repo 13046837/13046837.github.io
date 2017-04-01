@@ -1,7 +1,16 @@
 .main{
-     background-color: #34ca78; 
-     border: 2px solid red;
+     background-color: #d9edf7; 
+     border: 2px solid #009edf;
      border-radius: 5px;
+}
+
+.navbar{
+    margin-bottom: 3rem;
+}
+
+.thumbnail{
+    max-width: 400px;
+    margin: auto;
 }
 
 .panel-body{
@@ -18,7 +27,7 @@
     background-size: cover;
 }
 
-body{ background: #fafafa;}
+body{ background: #d9edf7;}
 .widget-area.blank {
 background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
 -webkit-box-shadow: none;
